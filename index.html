@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Znajdziemy.com</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #ffffff;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+    .container {
+      max-width: 800px;
+      margin: 100px auto;
+      padding: 20px;
+    }
+    img.logo {
+      width: 220px;
+      margin-bottom: 30px;
+    }
+    input[type="text"] {
+      padding: 10px;
+      width: 60%;
+      max-width: 400px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+    button {
+      padding: 10px 20px;
+      margin-left: 10px;
+      background-color: #0073e6;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    #results {
+      margin-top: 40px;
+      text-align: left;
+    }
+    .offer {
+      margin-bottom: 20px;
+    }
+    .offer img {
+      width: 100px;
+      vertical-align: middle;
+      margin-right: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <img src="logo.png" alt="Znajdziemy.com logo" class="logo" />
+    <div>
+      <input id="searchInput" type="text" placeholder="Czego szukasz?" />
+      <button onclick="searchForOffers()">Znajdź dla mnie</button>
+    </div>
+    <div id="results"></div>
+  </div>
+
+  <script>
+    function searchForOffers() {
+      const q = document.getElementById("searchInput").value;
+      const resultsDiv = document.getElementById("results");
+      resultsDiv.innerHTML = "Szukam najlepszych ofert...";
+
+      fetch("https://znajdziemy-backend.onrender.com/search?q=" + encodeURIComponent(q))
+        .then(response => response.json())
+        .then(data => {
+          resultsDiv.innerHTML = "";
+          data.results.forEach(item => {
+            const html = `
+              <div class="offer">
+                <a href="${item.url}" target="_blank">
+                  <img src="${item.image}" alt="${item.title}" />
+                  <strong>${item.title}</strong> – ${item.price}
+                </a>
+              </div>`;
+            resultsDiv.innerHTML += html;
+          });
+        })
+        .catch(() => {
+          resultsDiv.innerHTML = "Nie udało się pobrać ofert.";
+        });
+    }
+  </script>
+</body>
+</html>
